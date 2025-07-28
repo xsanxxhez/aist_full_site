@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="be" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIST - Уваход</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --soft-pink: #FFB6C1;
+      --soft-blue: #ADD8E6;
+      --soft-mint: #98FF98;
+      --soft-lavender: #E6E6FA;
+      --light-bg: #FFF5F5;
+      --card-bg: #FFFFFF;
+      --dark-bg: #F0E6E6;
+      --darker-bg: #E8D8D8;
+      --text-dark: #000000;
+      --text-light: #888888;
+      --text-white: #FFFFFF;
+      --accent-gradient: linear-gradient(135deg, var(--soft-pink), var(--soft-blue));
+      --purple-gradient: linear-gradient(135deg, var(--soft-lavender), var(--soft-blue));
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --transition-slow: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      --border-radius: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    }
+
+    [data-theme="dark"] {
+      --light-bg: #1A1A2E;
+      --card-bg: #16213E;
+      --dark-bg: #0F1A2F;
+      --darker-bg: #0A1428;
+      --text-dark: #E0E0E0;
+      --text-light: #A0A0A0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--light-bg);
+      color: var(--text-dark);
+      line-height: 1.6;
+      transition: var(--transition-slow);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Навигационная панель */
+    .nav-bar {
+      background-color: rgba(var(--card-bg), 0.9);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      padding: 15px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      transition: var(--transition-slow);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-bar.scrolled {
+      padding: 10px 5%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 28px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .logo img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .logo-text {
+      color: var(--soft-pink);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-link {
+      color: var(--text-dark);
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: var(--transition);
+      position: relative;
+    }
+
+    .nav-underline {
+      width: 0;
+      height: 2px;
+      background: var(--accent-gradient);
+      border-radius: 1px;
+      transition: var(--transition);
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--soft-pink);
+    }
+
+    .nav-link:hover .nav-underline, .nav-link.active .nav-underline {
+      width: 100%;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .theme-switcher {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+    }
+
+    .theme-switcher input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .theme-switcher label {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      border-radius: 34px;
+      transition: var(--transition);
+    }
+
+    .theme-switcher label:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .theme-switcher input:checked + label {
+      background-color: var(--soft-pink);
+    }
+
+    .theme-switcher input:checked + label:before {
+      transform: translateX(26px);
+    }
+
+    .theme-switcher label i {
+      position: absolute;
+      font-size: 12px;
+      top: 6px;
+    }
+
+    .theme-switcher label i.fa-sun {
+      left: 6px;
+      color: #f1c40f;
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .theme-switcher label i.fa-moon {
+      right: 6px;
+      color: #f5f6fa;
+      opacity: 1;
+    }
+
+    .theme-switcher input:checked + label i.fa-sun {
+      opacity: 1;
+    }
+
+    .theme-switcher input:checked + label i.fa-moon {
+      opacity: 0;
+    }
+
+    .language-selector-wrapper {
+      position: relative;
+    }
+
+    .language-selector {
+      background-color: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--text-dark);
+      padding: 8px 15px 8px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+      appearance: none;
+      padding-right: 30px;
+    }
+
+    .language-selector-arrow {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .language-selector:hover {
+      border-color: var(--soft-pink);
+    }
+
+    .language-selector:hover + .language-selector-arrow {
+      color: var(--soft-pink);
+    }
+
+    /* Мобильное меню */
+    .mobile-menu-toggle {
+      display: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .mobile-menu-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    /* Основное содержимое */
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 120px 20px 80px;
+    }
+
+    /* Контейнер авторизации */
+    .auth-container {
+      width: 100%;
+      max-width: 480px;
+      background-color: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      transition: var(--transition-slow);
+    }
+
+    .auth-header {
+      padding: 30px;
+      text-align: center;
+      background: var(--accent-gradient);
+      color: white;
+    }
+
+    .auth-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .auth-header p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    .auth-body {
+      padding: 30px;
+    }
+
+    .auth-tabs {
+      display: flex;
+      margin-bottom: 25px;
+      border-bottom: 1px solid var(--dark-bg);
+    }
+
+    .auth-tab {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+      border-bottom: 3px solid transparent;
+    }
+
+    .auth-tab.active {
+      border-bottom: 3px solid var(--soft-pink);
+      color: var(--soft-pink);
+    }
+
+    .auth-form {
+      display: none;
+    }
+
+    .auth-form.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--dark-bg);
+      background-color: var(--light-bg);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--soft-blue);
+      box-shadow: 0 0 0 3px rgba(173, 216, 230, 0.2);
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 14px;
+      border-radius: var(--border-radius);
+      border: none;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: white;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 25px 0;
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid var(--dark-bg);
+    }
+
+    .divider::before {
+      margin-right: 15px;
+    }
+
+    .divider::after {
+      margin-left: 15px;
+    }
+
+    .social-auth {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--dark-bg);
+      background-color: var(--light-bg);
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .social-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .social-btn i {
+      margin-right: 8px;
+      font-size: 1.2rem;
+    }
+
+    .btn-google { color: #DB4437; }
+    .btn-facebook { color: #1877F2; }
+    .btn-vk { color: #0077FF; }
+    .btn-yandex { color: #FC3F1D; }
+    .btn-mailru { color: #005FF9; }
+    .btn-odnoklassniki { color: #EE8208; }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    .auth-footer a {
+      color: var(--soft-blue);
+      text-decoration: none;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Адаптация для мобильных */
+    @media (max-width: 992px) {
+      .nav-links {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: var(--card-bg);
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0;
+        gap: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(-150%);
+        transition: transform 0.3s ease;
+        z-index: 999;
+      }
+
+      .nav-links.active {
+        transform: translateY(0);
+      }
+
+      .mobile-menu-toggle {
+        display: flex;
+      }
+
+      .logo-container {
+        gap: 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 100px 15px 60px;
+      }
+
+      .auth-header {
+        padding: 25px 20px;
+      }
+
+      .auth-body {
+        padding: 25px 20px;
+      }
+
+      .social-auth {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .nav-bar {
+        padding: 10px 15px;
+      }
+
+      .logo img {
+        width: 50px;
+        height: 50px;
+      }
+
+      .logo-text {
+        font-size: 24px;
+      }
+
+      .auth-tabs {
+        flex-direction: column;
+      }
+
+      .auth-tab {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Навигационная панель -->
+<nav class="nav-bar" id="navBar">
+  <div class="logo-container">
+    <div class="logo">
+      <img src="ai-avatar.png" alt="AIST Logo">
+      <span class="logo-text">AIST</span>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a href="index2.html" class="nav-link" data-i18n="nav_home">
+        <span class="nav-text">Галоўная</span>
+        <div class="nav-underline"></div>
+      </a>
+      <a href="chat.html" class="nav-link" data-i18n="nav_assistant">
+        <span class="nav-text">ІІ Асістэнт</span>
+        <div class="nav-underline"></div>
+      </a>
+      <a href="auth.html" class="nav-link active" data-i18n="nav_auth">
+        <span class="nav-text">Аўтарызацыя</span>
+        <div class="nav-underline"></div>
+      </a>
+      <a href="business.html" class="nav-link" data-i18n="nav_bussiness">
+        <span class="nav-text">Бизнес</span>
+        <div class="nav-underline"></div>
+      </a>
+      <a href="contacts.html" class="nav-link" data-i18n="nav_contacts">
+        <span class="nav-text">Контакты</span>
+        <div class="nav-underline"></div>
+      </a>
+    </div>
+  </div>
+  <div class="nav-actions">
+    <div class="theme-switcher">
+      <input type="checkbox" id="theme-toggle">
+      <label for="theme-toggle">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon"></i>
+        <span class="ball"></span>
+      </label>
+    </div>
+    <div class="language-selector-wrapper">
+      <select class="language-selector">
+        <option value="be">Беларуская</option>
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+      </select>
+      <div class="language-selector-arrow">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </div>
+    <div class="mobile-menu-toggle" id="mobileMenuToggle">
+      <i class="fas fa-bars"></i>
+    </div>
+  </div>
+</nav>
+
+<!-- Основное содержимое -->
+<main class="main-content">
+  <div class="auth-container">
+    <div class="auth-header">
+      <h1>Уваход у AIST</h1>
+      <p>Ваш персанальны ІІ-памочнік</p>
+    </div>
+
+    <div class="auth-body">
+      <div class="auth-tabs">
+        <div class="auth-tab active" data-tab="login">Уваход</div>
+        <div class="auth-tab" data-tab="register">Рэгістрацыя</div>
+      </div>
+
+      <!-- Форма входа -->
+      <div class="auth-form active" id="login-form">
+        <form>
+          <div class="form-group">
+            <label for="login-email">Электронная пошта</label>
+            <input type="email" id="login-email" class="form-control" placeholder="Увядзіце ваш email">
+          </div>
+
+          <div class="form-group">
+            <label for="login-password">Пароль</label>
+            <input type="password" id="login-password" class="form-control" placeholder="Увядзіце пароль">
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">Увайсці</button>
+          </div>
+        </form>
+
+        <div class="divider">або</div>
+
+        <div class="social-auth">
+          <button class="social-btn btn-google">
+            <i class="fab fa-google"></i> Google
+          </button>
+          <button class="social-btn btn-vk">
+            <i class="fab fa-vk"></i> ВКантакце
+          </button>
+          <button class="social-btn btn-yandex">
+            <i class="fab fa-yandex"></i> Яндекс
+          </button>
+          <button class="social-btn btn-mailru">
+            <i class="fas fa-at"></i> Mail.ru
+          </button>
+          <button class="social-btn btn-facebook">
+            <i class="fab fa-facebook-f"></i> Facebook
+          </button>
+          <button class="social-btn btn-odnoklassniki">
+            <i class="fab fa-odnoklassniki"></i> Аднакласнікі
+          </button>
+        </div>
+
+        <div class="auth-footer">
+          <a href="#" id="forgot-password">Забылі пароль?</a>
+        </div>
+      </div>
+
+      <!-- Форма регистрации -->
+      <div class="auth-form" id="register-form">
+        <form>
+          <div class="form-group">
+            <label for="register-name">Імя</label>
+            <input type="text" id="register-name" class="form-control" placeholder="Увядзіце ваша імя">
+          </div>
+
+          <div class="form-group">
+            <label for="register-email">Электронная пошта</label>
+            <input type="email" id="register-email" class="form-control" placeholder="Увядзіце ваш email">
+          </div>
+
+          <div class="form-group">
+            <label for="register-password">Пароль</label>
+            <input type="password" id="register-password" class="form-control" placeholder="Прыдумайце пароль">
+          </div>
+
+          <div class="form-group">
+            <label for="register-confirm">Паўтарыце пароль</label>
+            <input type="password" id="register-confirm" class="form-control" placeholder="Паўтарыце пароль">
+          </div>
+
+          <div class="form-group">
+            <button type="submit" class="btn btn-primary">Зарэгістравацца</button>
+          </div>
+        </form>
+
+        <div class="divider">або</div>
+
+        <div class="social-auth">
+          <button class="social-btn btn-google">
+            <i class="fab fa-google"></i> Google
+          </button>
+          <button class="social-btn btn-vk">
+            <i class="fab fa-vk"></i> ВКантакце
+          </button>
+          <button class="social-btn btn-yandex">
+            <i class="fab fa-yandex"></i> Яндекс
+          </button>
+          <button class="social-btn btn-mailru">
+            <i class="fas fa-at"></i> Mail.ru
+          </button>
+          <button class="social-btn btn-facebook">
+            <i class="fab fa-facebook-f"></i> Facebook
+          </button>
+          <button class="social-btn btn-odnoklassniki">
+            <i class="fab fa-odnoklassniki"></i> Аднакласнікі
+          </button>
+        </div>
+
+        <div class="auth-footer">
+          Ужо маеце ўліковы запіс? <a href="#" id="login-link">Увайсці</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Элементы интерфейса
+  const navBar = document.getElementById('navBar');
+  const navLinks = document.getElementById('navLinks');
+  const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  const tabs = document.querySelectorAll('.auth-tab');
+  const forms = document.querySelectorAll('.auth-form');
+  const loginLink = document.getElementById('login-link');
+  const forgotPassword = document.getElementById('forgot-password');
+  const themeToggle = document.getElementById('theme-toggle');
+  const languageSelector = document.querySelector('.language-selector');
+
+  // Переключение мобильного меню
+  mobileMenuToggle.addEventListener('click', () => {
+    navLinks.classList.toggle('active');
+    mobileMenuToggle.querySelector('i').classList.toggle('fa-bars');
+    mobileMenuToggle.querySelector('i').classList.toggle('fa-times');
+  });
+
+  // Закрытие меню при клике на ссылку
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('active');
+      mobileMenuToggle.querySelector('i').classList.remove('fa-times');
+      mobileMenuToggle.querySelector('i').classList.add('fa-bars');
+    });
+  });
+
+  // Переключение между вкладками
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      forms.forEach(f => f.classList.remove('active'));
+
+      tab.classList.add('active');
+      document.getElementById(`${tab.dataset.tab}-form`).classList.add('active');
+    });
+  });
+
+  // Ссылки для переключения между формами
+  if (loginLink) {
+    loginLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      tabs.forEach(t => t.classList.remove('active'));
+      forms.forEach(f => f.classList.remove('active'));
+
+      document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
+      document.getElementById('login-form').classList.add('active');
+    });
+  }
+
+  if (forgotPassword) {
+    forgotPassword.addEventListener('click', (e) => {
+      e.preventDefault();
+      alert('Для аднаўлення пароля звярніцеся ў службу падтрымкі');
+    });
+  }
+
+  // Переключение темы
+  if (themeToggle) {
+    themeToggle.addEventListener('change', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    });
+  }
+
+  // Проверяем сохраненную тему
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  if (savedTheme === 'dark' && themeToggle) {
+    themeToggle.checked = true;
+  }
+
+  // Обработка форм
+  document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Форма адпраўлена! У рэальным дадатку тут будзе праверка і адпраўка дадзеных на сервер.');
+    });
+  });
+
+  // Обработка социальных кнопок
+  document.querySelectorAll('.social-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const service = btn.textContent.trim();
+      alert(`Уваход праз ${service} будзе рэалізаваны ў поўнай версіі дадатку`);
+    });
+  });
+
+  // Плавный скролл для якорей
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+
+      const targetElement = document.querySelector(targetId);
+      if (targetElement) {
+        window.scrollTo({
+          top: targetElement.offsetTop - 80,
+          behavior: 'smooth'
+        });
+      }
+    });
+  });
+
+  // Эффект при скролле
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      navBar.classList.add('scrolled');
+    } else {
+      navBar.classList.remove('scrolled');
+    }
+  });
+
+  // Инициализация состояния навигации
+  if (window.scrollY > 50) {
+    navBar.classList.add('scrolled');
+  }
+</script>
+</body>
+</html>

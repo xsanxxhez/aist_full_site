@@ -1,0 +1,1551 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Chess Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Orbitron', sans-serif;
+            color: #00ffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glow-text {
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+        }
+
+        .neon-border {
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 15px #00ffff, inset 0 0 15px #00ffff;
+            border-radius: 8px;
+        }
+
+        .neon-border-red {
+            border: 2px solid #ff0080;
+            box-shadow: 0 0 15px #ff0080, inset 0 0 15px #ff0080;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 95%;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #00ffff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #ff0080;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .game-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .board-container {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .chess-board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            width: 100%;
+            aspect-ratio: 1/1;
+            border: 3px solid #00ffff;
+            box-shadow: 0 0 25px #00ffff;
+            position: relative;
+            background-color: #1a1a3a;
+        }
+
+        .square {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            user-select: none;
+        }
+
+        .square:hover {
+            background-color: rgba(0, 255, 255, 0.2) !important;
+        }
+
+        .square.selected {
+            background-color: rgba(255, 255, 0, 0.3) !important;
+            box-shadow: 0 0 15px yellow;
+        }
+
+        .square.valid-move::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: rgba(0, 255, 255, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        .square.valid-capture::after {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            border: 3px solid rgba(255, 0, 100, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff0080;
+        }
+
+        .square.check {
+            background-color: rgba(255, 0, 0, 0.3) !important;
+            animation: pulse-red 1s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 10px red; }
+            50% { box-shadow: 0 0 20px red, 0 0 30px red; }
+            100% { box-shadow: 0 0 10px red; }
+        }
+
+        .light {
+            background-color: #2a2a4a;
+        }
+
+        .dark {
+            background-color: #1a1a3a;
+        }
+
+        .controls {
+            width: 100%;
+            max-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-panel {
+            background: rgba(10, 10, 30, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        .panel-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mode-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #6a11cb, #2575fc);
+            color: white;
+            border: none;
+            padding: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
+        }
+
+        .btn.active {
+            background: linear-gradient(45deg, #ff0080, #ff8c00);
+            box-shadow: 0 0 20px #ff0080;
+        }
+
+        .btn-secondary {
+            background: rgba(0, 255, 255, 0.2);
+            color: #00ffff;
+            border: 1px solid #00ffff;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 255, 255, 0.4);
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .bot-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .bot-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+
+        .bot-option:hover {
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .bot-option input {
+            width: 18px;
+            height: 18px;
+            accent-color: #00ffff;
+        }
+
+        .bot-option span {
+            flex: 1;
+        }
+
+        .level-slider {
+            width: 100%;
+            margin: 15px 0;
+            -webkit-appearance: none;
+            height: 8px;
+            background: rgba(0, 255, 255, 0.2);
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .level-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00ffff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        .game-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .status {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            text-align: center;
+            min-height: 30px;
+            padding: 10px;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .status.check {
+            color: #ff5555;
+            animation: pulse-red 1s infinite;
+        }
+
+        .status.mate {
+            color: #ff0000;
+            animation: pulse-red 1s infinite;
+        }
+
+        .status.win {
+            color: #00ff00;
+            animation: pulse-green 1s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { text-shadow: 0 0 5px #00ff00; }
+            50% { text-shadow: 0 0 15px #00ff00; }
+            100% { text-shadow: 0 0 5px #00ff00; }
+        }
+
+        .moves-history {
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .moves-history::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .moves-history::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+
+        .moves-history::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 5px;
+        }
+
+        .move-item {
+            padding: 5px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .move-number {
+            color: #ff0080;
+            margin-right: 10px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 0.8rem;
+        }
+
+        .coordinates {
+            position: absolute;
+            color: rgba(0, 255, 255, 0.7);
+            font-size: 0.7rem;
+            pointer-events: none;
+        }
+
+        .coord-file {
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .coord-rank {
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .cyber-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="1" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.1 0"/></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>');
+            opacity: 0.05;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 95%, rgba(0, 255, 255, 0.1) 95%);
+            background-size: 100% 5px;
+            pointer-events: none;
+            z-index: 11;
+            animation: scanline 5s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100%; }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .controls {
+                max-width: 100%;
+            }
+
+            .chess-board {
+                max-width: 90vw;
+                max-height: 90vw;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 15px #00ffff; }
+            50% { box-shadow: 0 0 25px #00ffff, 0 0 40px #00ffff; }
+            100% { box-shadow: 0 0 15px #00ffff; }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="cyber-grid"></div>
+<div class="cyber-overlay"></div>
+<div class="scanline"></div>
+
+<div class="container">
+    <header>
+        <h1>AIST CHESS</h1>
+
+    </header>
+
+    <div class="game-container">
+        <div class="board-container">
+            <div class="chess-board" id="chessBoard">
+                <!-- Доска будет создана JavaScript -->
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="control-panel neon-border">
+                <div class="panel-title glow-text">Режим игры</div>
+                <div class="mode-buttons">
+                    <button class="btn active" data-mode="single">Одиночная</button>
+                    <button class="btn" data-mode="bot">Против бота</button>
+                </div>
+            </div>
+
+            <div class="control-panel neon-border" id="botSettings">
+                <div class="panel-title glow-text">Настройки бота</div>
+                <div class="bot-options">
+                    <label class="bot-option">
+                        <input type="radio" name="botType" value="random" checked>
+                        <span>Новичок</span>
+                    </label>
+                    <label class="bot-option">
+                        <input type="radio" name="botType" value="smart">
+                        <span>Продвинутый</span>
+                    </label>
+                    <label class="bot-option">
+                        <input type="radio" name="botType" value="master">
+                        <span>Мастер</span>
+                    </label>
+                </div>
+                <div>
+                    <div style="text-align: center; margin-top: 10px;">Сложность: <span id="difficultyValue">5</span></div>
+                    <input type="range" min="1" max="10" value="5" class="level-slider" id="difficultySlider">
+                </div>
+            </div>
+
+            <div class="control-panel neon-border">
+                <div class="panel-title glow-text">Игровая информация</div>
+                <div class="game-info">
+                    <div class="status glow-text" id="gameStatus">Ход белых</div>
+                    <div class="moves-history" id="movesHistory">
+                        <!-- История ходов -->
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" id="newGameBtn">Новая игра</button>
+                        <button class="btn btn-secondary" id="undoBtn">Отмена хода</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    class NeonChessPro {
+        constructor() {
+            this.boardElement = document.getElementById('chessBoard');
+            this.statusElement = document.getElementById('gameStatus');
+            this.movesHistoryElement = document.getElementById('movesHistory');
+            this.difficultySlider = document.getElementById('difficultySlider');
+            this.difficultyValue = document.getElementById('difficultyValue');
+            this.botSettings = document.getElementById('botSettings');
+
+            this.gameState = this.createInitialGameState();
+            this.selectedPiece = null;
+            this.validMoves = [];
+            this.gameMode = 'single';
+            this.botType = 'random';
+            this.difficulty = 5;
+
+            this.initializeBoard();
+            this.setupEventListeners();
+            this.updateStatus();
+        }
+
+        createInitialGameState() {
+            return {
+                board: Array(8).fill(null).map(() => Array(8).fill(null)),
+                currentPlayer: 'white',
+                gameHistory: [],
+                castlingRights: {
+                    white: { kingSide: true, queenSide: true },
+                    black: { kingSide: true, queenSide: true }
+                },
+                enPassantTarget: null,
+                moveCount: 0,
+                gameOver: false,
+                winner: null,
+                check: false
+            };
+        }
+
+        initializeBoard() {
+            this.gameState = this.createInitialGameState();
+            this.setupInitialPieces();
+            this.renderBoard();
+        }
+
+        setupInitialPieces() {
+            const board = this.gameState.board;
+
+            // Черные фигуры
+            board[0] = [
+                {type: 'rook', color: 'black', hasMoved: false},
+                {type: 'knight', color: 'black'},
+                {type: 'bishop', color: 'black'},
+                {type: 'queen', color: 'black'},
+                {type: 'king', color: 'black', hasMoved: false},
+                {type: 'bishop', color: 'black'},
+                {type: 'knight', color: 'black'},
+                {type: 'rook', color: 'black', hasMoved: false}
+            ];
+
+            // Черные пешки
+            for (let i = 0; i < 8; i++) {
+                board[1][i] = {type: 'pawn', color: 'black', hasMoved: false};
+            }
+
+            // Белые пешки
+            for (let i = 0; i < 8; i++) {
+                board[6][i] = {type: 'pawn', color: 'white', hasMoved: false};
+            }
+
+            // Белые фигуры
+            board[7] = [
+                {type: 'rook', color: 'white', hasMoved: false},
+                {type: 'knight', color: 'white'},
+                {type: 'bishop', color: 'white'},
+                {type: 'queen', color: 'white'},
+                {type: 'king', color: 'white', hasMoved: false},
+                {type: 'bishop', color: 'white'},
+                {type: 'knight', color: 'white'},
+                {type: 'rook', color: 'white', hasMoved: false}
+            ];
+        }
+
+
+
+       renderBoard() {
+    // Очищаем только клетки доски, не трогая координаты
+    const squares = document.querySelectorAll('.square:not(.coordinates)');
+    squares.forEach(sq => sq.remove());
+
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const square = document.createElement('div');
+            square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+            square.dataset.row = row;
+            square.dataset.col = col;
+
+            const piece = this.gameState.board[row][col];
+            if (piece) {
+                square.innerHTML = this.getPieceSymbol(piece.type, piece.color);
+                square.dataset.piece = piece.type;
+                square.dataset.color = piece.color;
+            }
+
+            square.addEventListener('click', () => this.handleSquareClick(row, col));
+            this.boardElement.appendChild(square);
+        }
+    }
+
+    this.highlightCheck();
+}
+
+initializeBoard() {
+    this.gameState = this.createInitialGameState();
+    this.setupInitialPieces();
+    this.renderBoard();
+    this.addCoordinates(); // Добавляем координаты один раз при инициализации
+}
+
+addCoordinates() {
+    // Удаляем старые координаты, если они есть
+    document.querySelectorAll('.coordinates').forEach(coord => coord.remove());
+
+    // Добавляем буквенные координаты (a-h)
+    for (let i = 0; i < 8; i++) {
+        const fileCoord = document.createElement('div');
+        fileCoord.className = 'coordinates coord-file';
+        fileCoord.style.left = `${(i * 12.5) + 6.25}%`;
+        fileCoord.textContent = String.fromCharCode(97 + i);
+        this.boardElement.appendChild(fileCoord);
+
+        // Добавляем числовые координаты (1-8)
+        const rankCoord = document.createElement('div');
+        rankCoord.className = 'coordinates coord-rank';
+        rankCoord.style.top = `${(i * 12.5) + 6.25}%`;
+        rankCoord.textContent = 8 - i;
+        this.boardElement.appendChild(rankCoord);
+    }
+}
+
+        getPieceSymbol(type, color) {
+            const symbols = {
+                'king': color === 'white' ? '♔' : '♚',
+                'queen': color === 'white' ? '♕' : '♛',
+                'rook': color === 'white' ? '♖' : '♜',
+                'bishop': color === 'white' ? '♗' : '♝',
+                'knight': color === 'white' ? '♘' : '♞',
+                'pawn': color === 'white' ? '♙' : '♟'
+            };
+            return symbols[type];
+        }
+
+        handleSquareClick(row, col) {
+            if (this.gameState.gameOver) return;
+
+            const piece = this.gameState.board[row][col];
+            const color = piece ? piece.color : null;
+
+            // Если уже выбрана фигура и кликнули на допустимую клетку
+            if (this.selectedPiece && this.isValidMove(this.selectedPiece.row, this.selectedPiece.col, row, col)) {
+                this.makeMove(this.selectedPiece.row, this.selectedPiece.col, row, col);
+                this.clearSelection();
+                this.validMoves = [];
+
+                // Если режим против бота и ход черных
+                if (this.gameMode === 'bot' && this.gameState.currentPlayer === 'black' && !this.gameState.gameOver) {
+                    setTimeout(() => this.makeBotMove(), 500);
+                }
+                return;
+            }
+
+            // Очищаем предыдущее выделение
+            this.clearSelection();
+            this.validMoves = [];
+
+            // Если кликнули на фигуру текущего игрока
+            if (piece && color === this.gameState.currentPlayer) {
+                this.selectedPiece = {row, col, type: piece.type, color};
+                this.getSquare(row, col).classList.add('selected');
+                this.showValidMoves(row, col, piece);
+            }
+        }
+
+        getSquare(row, col) {
+            return document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+        }
+
+        clearSelection() {
+            document.querySelectorAll('.square').forEach(square => {
+                square.classList.remove('selected');
+                square.classList.remove('valid-move');
+                square.classList.remove('valid-capture');
+            });
+            this.selectedPiece = null;
+        }
+
+        showValidMoves(row, col, piece) {
+            this.validMoves = this.calculateValidMoves(row, col, piece);
+            this.validMoves.forEach(([r, c]) => {
+                const square = this.getSquare(r, c);
+                const targetPiece = this.gameState.board[r][c];
+
+                if (targetPiece) {
+                    square.classList.add('valid-capture');
+                } else {
+                    square.classList.add('valid-move');
+                }
+            });
+        }
+
+        calculateValidMoves(row, col, piece) {
+            let moves = [];
+
+            switch (piece.type) {
+                case 'pawn':
+                    moves = this.getPawnMoves(row, col, piece);
+                    break;
+                case 'knight':
+                    moves = this.getKnightMoves(row, col, piece);
+                    break;
+                case 'bishop':
+                    moves = this.getBishopMoves(row, col, piece);
+                    break;
+                case 'rook':
+                    moves = this.getRookMoves(row, col, piece);
+                    break;
+                case 'queen':
+                    moves = this.getQueenMoves(row, col, piece);
+                    break;
+                case 'king':
+                    moves = this.getKingMoves(row, col, piece);
+                    break;
+            }
+
+            // Фильтруем ходы, которые приводят к шаху
+            return moves.filter(([toRow, toCol]) => !this.wouldBeInCheck(row, col, toRow, toCol, piece));
+        }
+
+        getPawnMoves(row, col, piece) {
+            const moves = [];
+            const direction = piece.color === 'white' ? -1 : 1;
+            const startRow = piece.color === 'white' ? 6 : 1;
+
+            // Простой ход вперед
+            if (this.isValidPosition(row + direction, col) && !this.gameState.board[row + direction][col]) {
+                moves.push([row + direction, col]);
+                // Первый ход на две клетки
+                if (row === startRow && !this.gameState.board[row + 2 * direction][col]) {
+                    moves.push([row + 2 * direction, col]);
+                }
+            }
+
+            // Взятие по диагонали
+            [-1, 1].forEach(dc => {
+                const newCol = col + dc;
+                if (this.isValidPosition(row + direction, newCol)) {
+                    const targetPiece = this.gameState.board[row + direction][newCol];
+                    if (targetPiece && targetPiece.color !== piece.color) {
+                        moves.push([row + direction, newCol]);
+                    }
+                    // Взятие на проходе
+                    if (this.gameState.enPassantTarget &&
+                        this.gameState.enPassantTarget.row === row + direction &&
+                        this.gameState.enPassantTarget.col === newCol) {
+                        moves.push([row + direction, newCol]);
+                    }
+                }
+            });
+
+            return moves;
+        }
+
+        getKnightMoves(row, col, piece) {
+            const moves = [];
+            const knightMoves = [[-2,-1], [-2,1], [-1,-2], [-1,2], [1,-2], [1,2], [2,-1], [2,1]];
+
+            knightMoves.forEach(([dr, dc]) => {
+                const newRow = row + dr;
+                const newCol = col + dc;
+                if (this.isValidPosition(newRow, newCol)) {
+                    const targetPiece = this.gameState.board[newRow][newCol];
+                    if (!targetPiece || targetPiece.color !== piece.color) {
+                        moves.push([newRow, newCol]);
+                    }
+                }
+            });
+
+            return moves;
+        }
+
+        getBishopMoves(row, col, piece) {
+            return this.getDirectionalMoves(row, col, piece, [[-1,-1], [-1,1], [1,-1], [1,1]]);
+        }
+
+        getRookMoves(row, col, piece) {
+            return this.getDirectionalMoves(row, col, piece, [[-1,0], [0,-1], [0,1], [1,0]]);
+        }
+
+        getQueenMoves(row, col, piece) {
+            return this.getDirectionalMoves(row, col, piece,
+                [[-1,-1], [-1,0], [-1,1], [0,-1], [0,1], [1,-1], [1,0], [1,1]]);
+        }
+
+        getKingMoves(row, col, piece) {
+            const moves = [];
+            const kingMoves = [[-1,-1], [-1,0], [-1,1], [0,-1], [0,1], [1,-1], [1,0], [1,1]];
+
+            kingMoves.forEach(([dr, dc]) => {
+                const newRow = row + dr;
+                const newCol = col + dc;
+                if (this.isValidPosition(newRow, newCol)) {
+                    const targetPiece = this.gameState.board[newRow][newCol];
+                    if (!targetPiece || targetPiece.color !== piece.color) {
+                        moves.push([newRow, newCol]);
+                    }
+                }
+            });
+
+            // Рокировка
+            if (!piece.hasMoved && !this.isInCheck(piece.color)) {
+                // Короткая рокировка
+                if (this.canCastle(row, col, 'king')) {
+                    moves.push([row, col + 2]);
+                }
+                // Длинная рокировка
+                if (this.canCastle(row, col, 'queen')) {
+                    moves.push([row, col - 2]);
+                }
+            }
+
+            return moves;
+        }
+
+        getDirectionalMoves(row, col, piece, directions) {
+            const moves = [];
+
+            directions.forEach(([dr, dc]) => {
+                let newRow = row + dr;
+                let newCol = col + dc;
+                while (this.isValidPosition(newRow, newCol)) {
+                    const targetPiece = this.gameState.board[newRow][newCol];
+                    if (!targetPiece) {
+                        moves.push([newRow, newCol]);
+                    } else {
+                        if (targetPiece.color !== piece.color) {
+                            moves.push([newRow, newCol]);
+                        }
+                        break;
+                    }
+                    newRow += dr;
+                    newCol += dc;
+                }
+            });
+
+            return moves;
+        }
+
+        canCastle(kingRow, kingCol, side) {
+            const color = this.gameState.currentPlayer;
+            const rights = this.gameState.castlingRights[color];
+
+            if (side === 'king' && rights.kingSide) {
+                // Проверяем, свободны ли клетки
+                if (!this.gameState.board[kingRow][kingCol + 1] &&
+                    !this.gameState.board[kingRow][kingCol + 2]) {
+                    // Проверяем, не проходит ли король через атакуемые клетки
+                    if (!this.isSquareAttacked(kingRow, kingCol + 1, color) &&
+                        !this.isSquareAttacked(kingRow, kingCol + 2, color)) {
+                        // Проверяем ладью
+                        const rook = this.gameState.board[kingRow][7];
+                        if (rook && rook.type === 'rook' && rook.color === color && !rook.hasMoved) {
+                            return true;
+                        }
+                    }
+                }
+            } else if (side === 'queen' && rights.queenSide) {
+                // Проверяем, свободны ли клетки
+                if (!this.gameState.board[kingRow][kingCol - 1] &&
+                    !this.gameState.board[kingRow][kingCol - 2] &&
+                    !this.gameState.board[kingRow][kingCol - 3]) {
+                    // Проверяем, не проходит ли король через атакуемые клетки
+                    if (!this.isSquareAttacked(kingRow, kingCol - 1, color) &&
+                        !this.isSquareAttacked(kingRow, kingCol - 2, color)) {
+                        // Проверяем ладью
+                        const rook = this.gameState.board[kingRow][0];
+                        if (rook && rook.type === 'rook' && rook.color === color && !rook.hasMoved) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        isValidPosition(row, col) {
+            return row >= 0 && row < 8 && col >= 0 && col < 8;
+        }
+
+        isValidMove(fromRow, fromCol, toRow, toCol) {
+            return this.validMoves.some(([r, c]) => r === toRow && c === toCol);
+        }
+
+        wouldBeInCheck(fromRow, fromCol, toRow, toCol, piece) {
+            // Создаем временную копию состояния игры
+            const tempBoard = this.deepCopyBoard(this.gameState.board);
+            const tempCastling = JSON.parse(JSON.stringify(this.gameState.castlingRights));
+            const tempEnPassant = this.gameState.enPassantTarget;
+
+            // Выполняем ход на временной доске
+            this.makeTemporaryMove(tempBoard, fromRow, fromCol, toRow, toCol, piece);
+
+            // Проверяем, находится ли король под шахом после хода
+            return this.isInCheck(piece.color, tempBoard, tempCastling, tempEnPassant);
+        }
+
+        deepCopyBoard(board) {
+            return board.map(row => row.map(piece => piece ? {...piece} : null));
+        }
+
+        makeTemporaryMove(board, fromRow, fromCol, toRow, toCol, piece) {
+            board[toRow][toCol] = {...piece};
+            board[fromRow][fromCol] = null;
+
+            // Обработка рокировки
+            if (piece.type === 'king' && Math.abs(fromCol - toCol) === 2) {
+                if (toCol > fromCol) { // Короткая рокировка
+                    board[toRow][5] = board[toRow][7];
+                    board[toRow][7] = null;
+                } else { // Длинная рокировка
+                    board[toRow][3] = board[toRow][0];
+                    board[toRow][0] = null;
+                }
+            }
+
+            // Обработка превращения пешки (по умолчанию в ферзя)
+            if (piece.type === 'pawn' && (toRow === 0 || toRow === 7)) {
+                board[toRow][toCol].type = 'queen';
+            }
+        }
+
+        makeMove(fromRow, fromCol, toRow, toCol) {
+            const piece = this.gameState.board[fromRow][fromCol];
+            const capturedPiece = this.gameState.board[toRow][toCol];
+
+            // Сохраняем состояние перед ходом для отмены
+            const moveRecord = {
+                from: {row: fromRow, col: fromCol},
+                to: {row: toRow, col: toCol},
+                piece: {...piece},
+                captured: capturedPiece ? {...capturedPiece} : null,
+                castlingRights: JSON.parse(JSON.stringify(this.gameState.castlingRights)),
+                enPassantTarget: this.gameState.enPassantTarget,
+                currentPlayer: this.gameState.currentPlayer
+            };
+
+            // Обновляем право на взятие на проходе
+            this.gameState.enPassantTarget = null;
+
+            // Обработка взятия на проходе
+            if (piece.type === 'pawn' &&
+                this.gameState.enPassantTarget &&
+                toRow === this.gameState.enPassantTarget.row &&
+                toCol === this.gameState.enPassantTarget.col) {
+                const capturedPawnRow = piece.color === 'white' ? toRow + 1 : toRow - 1;
+                this.gameState.board[capturedPawnRow][toCol] = null;
+                moveRecord.capturedEnPassant = {row: capturedPawnRow, col: toCol};
+            }
+
+            // Обработка двойного хода пешки (установка en passant)
+            if (piece.type === 'pawn' && Math.abs(fromRow - toRow) === 2) {
+                const enPassantRow = piece.color === 'white' ? toRow + 1 :
+                                        toRow - 1;
+                    this.gameState.enPassantTarget = {row: enPassantRow, col: toCol};
+                }
+
+                // Обработка рокировки
+                if (piece.type === 'king' && Math.abs(fromCol - toCol) === 2) {
+                    if (toCol > fromCol) { // Короткая рокировка
+                        this.gameState.board[toRow][5] = this.gameState.board[toRow][7];
+                        this.gameState.board[toRow][7] = null;
+                        this.gameState.board[toRow][5].hasMoved = true;
+                    } else { // Длинная рокировка
+                        this.gameState.board[toRow][3] = this.gameState.board[toRow][0];
+                        this.gameState.board[toRow][0] = null;
+                        this.gameState.board[toRow][3].hasMoved = true;
+                    }
+                }
+
+                // Выполняем основной ход
+                this.gameState.board[toRow][toCol] = {...piece};
+                this.gameState.board[toRow][toCol].hasMoved = true;
+                this.gameState.board[fromRow][fromCol] = null;
+
+                // Обработка превращения пешки
+                if (piece.type === 'pawn' && (toRow === 0 || toRow === 7)) {
+                    this.gameState.board[toRow][toCol].type = 'queen'; // По умолчанию в ферзя
+                }
+
+                // Обновляем права на рокировку
+                if (piece.type === 'king') {
+                    this.gameState.castlingRights[piece.color].kingSide = false;
+                    this.gameState.castlingRights[piece.color].queenSide = false;
+                }
+                if (piece.type === 'rook') {
+                    if (fromCol === 0) {
+                        this.gameState.castlingRights[piece.color].queenSide = false;
+                    } else if (fromCol === 7) {
+                        this.gameState.castlingRights[piece.color].kingSide = false;
+                    }
+                }
+
+                // Проверяем, взяли ли мы ладью противника
+                if (capturedPiece && capturedPiece.type === 'rook') {
+                    const opponent = piece.color === 'white' ? 'black' : 'white';
+                    if (toRow === (opponent === 'white' ? 7 : 0)) {
+                        if (toCol === 0) {
+                            this.gameState.castlingRights[opponent].queenSide = false;
+                        } else if (toCol === 7) {
+                            this.gameState.castlingRights[opponent].kingSide = false;
+                        }
+                    }
+                }
+
+                // Сохраняем ход в историю
+                this.gameState.gameHistory.push(moveRecord);
+
+                // Меняем игрока
+                this.gameState.currentPlayer = this.gameState.currentPlayer === 'white' ? 'black' : 'white';
+                this.gameState.moveCount++;
+
+                // Перерисовываем доску
+                this.renderBoard();
+
+                // Проверяем шах и мат
+                this.checkGameStatus();
+
+                // Обновляем интерфейс
+                this.updateStatus();
+                this.updateMovesHistory();
+            }
+
+            isInCheck(color, board = null, castlingRights = null, enPassantTarget = null) {
+                const currentBoard = board || this.gameState.board;
+                let kingRow, kingCol;
+
+                // Находим короля
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const piece = currentBoard[row][col];
+                        if (piece && piece.type === 'king' && piece.color === color) {
+                            kingRow = row;
+                            kingCol = col;
+                            break;
+                        }
+                    }
+                    if (kingRow !== undefined) break;
+                }
+
+                if (kingRow === undefined) return false;
+
+                // Проверяем, атакован ли король
+                return this.isSquareAttacked(kingRow, kingCol, color, currentBoard, castlingRights, enPassantTarget);
+            }
+
+            isSquareAttacked(row, col, color, board = null, castlingRights = null, enPassantTarget = null) {
+                const currentBoard = board || this.gameState.board;
+                const opponent = color === 'white' ? 'black' : 'white';
+
+                // Проверяем атаки пешек
+                const pawnDirection = color === 'white' ? 1 : -1;
+                for (const dc of [-1, 1]) {
+                    const attackRow = row + pawnDirection;
+                    const attackCol = col + dc;
+                    if (this.isValidPosition(attackRow, attackCol)) {
+                        const piece = currentBoard[attackRow][attackCol];
+                        if (piece && piece.type === 'pawn' && piece.color === opponent) {
+                            return true;
+                        }
+                    }
+                }
+
+                // Проверяем атаки коней
+                const knightMoves = [[-2,-1], [-2,1], [-1,-2], [-1,2], [1,-2], [1,2], [2,-1], [2,1]];
+                for (const [dr, dc] of knightMoves) {
+                    const attackRow = row + dr;
+                    const attackCol = col + dc;
+                    if (this.isValidPosition(attackRow, attackCol)) {
+                        const piece = currentBoard[attackRow][attackCol];
+                        if (piece && piece.type === 'knight' && piece.color === opponent) {
+                            return true;
+                        }
+                    }
+                }
+
+                // Проверяем атаки слонов, ладей и ферзей
+                const directions = [
+                    // Прямые направления (ладья, ферзь)
+                    [[-1,0], [0,-1], [0,1], [1,0]],
+                    // Диагональные направления (слон, ферзь)
+                    [[-1,-1], [-1,1], [1,-1], [1,1]]
+                ];
+
+                for (let dirType = 0; dirType < 2; dirType++) {
+                    for (const [dr, dc] of directions[dirType]) {
+                        let attackRow = row + dr;
+                        let attackCol = col + dc;
+                        let steps = 0;
+                        while (this.isValidPosition(attackRow, attackCol) && steps < 7) {
+                            const piece = currentBoard[attackRow][attackCol];
+                            if (piece) {
+                                if (piece.color === opponent) {
+                                    if (dirType === 0 && (piece.type === 'rook' || piece.type === 'queen')) {
+                                        return true;
+                                    }
+                                    if (dirType === 1 && (piece.type === 'bishop' || piece.type === 'queen')) {
+                                        return true;
+                                    }
+                                    if (steps === 0 && piece.type === 'king') {
+                                        return true;
+                                    }
+                                }
+                                break;
+                            }
+                            attackRow += dr;
+                            attackCol += dc;
+                            steps++;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            highlightCheck() {
+                document.querySelectorAll('.square').forEach(square => {
+                    square.classList.remove('check');
+                });
+
+                if (this.isInCheck(this.gameState.currentPlayer)) {
+                    // Находим короля и подсвечиваем его
+                    for (let row = 0; row < 8; row++) {
+                        for (let col = 0; col < 8; col++) {
+                            const piece = this.gameState.board[row][col];
+                            if (piece && piece.type === 'king' && piece.color === this.gameState.currentPlayer) {
+                                this.getSquare(row, col).classList.add('check');
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            checkGameStatus() {
+                const color = this.gameState.currentPlayer;
+                const opponent = color === 'white' ? 'black' : 'white';
+
+                // Проверяем, есть ли возможные ходы
+                let hasValidMoves = false;
+                outer: for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const piece = this.gameState.board[row][col];
+                        if (piece && piece.color === color) {
+                            const moves = this.calculateValidMoves(row, col, piece);
+                            if (moves.length > 0) {
+                                hasValidMoves = true;
+                                break outer;
+                            }
+                        }
+                    }
+                }
+
+                const inCheck = this.isInCheck(color);
+
+                if (!hasValidMoves) {
+                    this.gameState.gameOver = true;
+                    if (inCheck) {
+                        this.gameState.winner = opponent;
+                        this.gameState.check = true;
+                    } else {
+                        this.gameState.winner = 'draw';
+                    }
+                } else {
+                    this.gameState.check = inCheck;
+                }
+            }
+
+            updateStatus() {
+                if (this.gameState.gameOver) {
+                    if (this.gameState.winner === 'draw') {
+                        this.statusElement.textContent = 'ПАТ!';
+                        this.statusElement.className = 'status win glow-text';
+                    } else {
+                        const winner = this.gameState.winner === 'white' ? 'БЕЛЫЕ' : 'ЧЕРНЫЕ';
+                        this.statusElement.textContent = `${winner} ПОБЕДИЛИ!`;
+                        this.statusElement.className = 'status mate glow-text';
+                    }
+                } else {
+                    const playerNames = {
+                        'white': 'БЕЛЫХ',
+                        'black': 'ЧЕРНЫХ'
+                    };
+                    if (this.gameState.check) {
+                        this.statusElement.textContent = `ШАХ! ХОД ${playerNames[this.gameState.currentPlayer]}`;
+                        this.statusElement.className = 'status check glow-text';
+                    } else {
+                        this.statusElement.textContent = `ХОД ${playerNames[this.gameState.currentPlayer]}`;
+                        this.statusElement.className = 'status glow-text';
+                    }
+                }
+            }
+
+            updateMovesHistory() {
+                this.movesHistoryElement.innerHTML = '';
+                for (let i = 0; i < this.gameState.gameHistory.length; i += 2) {
+                    const moveItem = document.createElement('div');
+                    moveItem.className = 'move-item';
+                    const moveNumber = Math.floor(i / 2) + 1;
+
+                    let moveText = `<span class="move-number">${moveNumber}.</span> `;
+
+                    const whiteMove = this.gameState.gameHistory[i];
+                    moveText += this.formatMove(whiteMove);
+
+                    if (i + 1 < this.gameState.gameHistory.length) {
+                        const blackMove = this.gameState.gameHistory[i + 1];
+                        moveText += ` <span class="move-number">${moveNumber}...</span> ${this.formatMove(blackMove)}`;
+                    }
+
+                    moveItem.innerHTML = moveText;
+                    this.movesHistoryElement.appendChild(moveItem);
+                }
+                this.movesHistoryElement.scrollTop = this.movesHistoryElement.scrollHeight;
+            }
+
+            formatMove(move) {
+                if (!move) return '';
+
+                const pieceSymbol = {
+                    'king': 'K',
+                    'queen': 'Q',
+                    'rook': 'R',
+                    'bishop': 'B',
+                    'knight': 'N',
+                    'pawn': ''
+                };
+
+                let moveText = pieceSymbol[move.piece.type];
+
+                // Рокировка
+                if (move.piece.type === 'king' && Math.abs(move.from.col - move.to.col) === 2) {
+                    return move.to.col > move.from.col ? 'O-O' : 'O-O-O';
+                }
+
+                const fromSquare = String.fromCharCode(97 + move.from.col) + (8 - move.from.row);
+                const toSquare = String.fromCharCode(97 + move.to.col) + (8 - move.to.row);
+
+                if (move.captured) {
+                    if (move.piece.type === 'pawn') {
+                        moveText += String.fromCharCode(97 + move.from.col);
+                    }
+                    moveText += 'x';
+                }
+
+                moveText += toSquare;
+
+                // Превращение пешки
+                if (move.piece.type === 'pawn' && (move.to.row === 0 || move.to.row === 7)) {
+                    moveText += '=Q';
+                }
+
+                return moveText;
+            }
+
+            makeBotMove() {
+                if (this.gameMode !== 'bot' || this.gameState.currentPlayer !== 'black' || this.gameState.gameOver) return;
+
+                let allMoves = [];
+
+                // Собираем все возможные ходы
+                for (let row = 0; row < 8; row++) {
+                    for (let col = 0; col < 8; col++) {
+                        const piece = this.gameState.board[row][col];
+                        if (piece && piece.color === 'black') {
+                            const moves = this.calculateValidMoves(row, col, piece);
+                            moves.forEach(([toRow, toCol]) => {
+                                allMoves.push({from: {row, col}, to: {row: toRow, col: toCol}, piece});
+                            });
+                        }
+                    }
+                }
+
+                if (allMoves.length > 0) {
+                    let selectedMove;
+
+                    if (this.botType === 'random') {
+                        // Случайный выбор
+                        selectedMove = allMoves[Math.floor(Math.random() * allMoves.length)];
+                    } else if (this.botType === 'smart') {
+                        // Умный бот - выбирает ход с максимальной выгодой
+                        selectedMove = this.getSmartMove(allMoves);
+                    } else {
+                        // Мастер бот - более сложная стратегия
+                        selectedMove = this.getMasterMove(allMoves);
+                    }
+
+                    setTimeout(() => {
+                        this.makeMove(selectedMove.from.row, selectedMove.from.col,
+                                    selectedMove.to.row, selectedMove.to.col);
+                    }, 500);
+                }
+            }
+
+            getSmartMove(moves) {
+                // Простая оценка ходов: приоритет за взятиями и шахами
+                let bestMoves = [];
+                let bestScore = -Infinity;
+
+                for (const move of moves) {
+                    let score = 0;
+
+                    // Оценка взятия
+                    const targetPiece = this.gameState.board[move.to.row][move.to.col];
+                    if (targetPiece) {
+                        const pieceValues = {
+                            'pawn': 1, 'knight': 3, 'bishop': 3,
+                            'rook': 5, 'queen': 9, 'king': 0
+                        };
+                        score += pieceValues[targetPiece.type] * 10;
+                    }
+
+                    // Оценка шаха
+                    if (this.wouldGiveCheck(move.from.row, move.from.col, move.to.row, move.to.col, move.piece)) {
+                        score += 50;
+                    }
+
+                    // Учитываем сложность
+                    score += Math.random() * this.difficulty * 2;
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMoves = [move];
+                    } else if (score === bestScore) {
+                        bestMoves.push(move);
+                    }
+                }
+
+                return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+            }
+
+            getMasterMove(moves) {
+                // Более сложная стратегия
+                let bestMoves = [];
+                let bestScore = -Infinity;
+
+                for (const move of moves) {
+                    let score = 0;
+
+                    // Оценка взятия
+                    const targetPiece = this.gameState.board[move.to.row][move.to.col];
+                    if (targetPiece) {
+                        const pieceValues = {
+                            'pawn': 1, 'knight': 3, 'bishop': 3,
+                            'rook': 5, 'queen': 9, 'king': 0
+                        };
+                        score += pieceValues[targetPiece.type] * 10;
+                    }
+
+                    // Оценка шаха
+                    if (this.wouldGiveCheck(move.from.row, move.from.col, move.to.row, move.to.col, move.piece)) {
+                        score += 50;
+                    }
+
+                    // Оценка развития фигур
+                    if (move.piece.type === 'knight' || move.piece.type === 'bishop') {
+                        if (move.from.row > 5) score += 5; // Развитие с начальной позиции
+                    }
+
+                    // Оценка центра
+                    if (move.to.row >= 2 && move.to.row <= 5 && move.to.col >= 2 && move.to.col <= 5) {
+                        score += 3;
+                    }
+
+                    // Оценка безопасности короля
+                    if (move.piece.type === 'king') {
+                        // Штраф за ранний выход короля
+                        if (this.gameState.moveCount < 20) {
+                            score -= 20;
+                        }
+                    }
+
+                    // Оценка рокировки
+                    if (move.piece.type === 'king' && Math.abs(move.from.col - move.to.col) === 2) {
+                        score += 15;
+                    }
+
+                    // Учитываем сложность
+                    score += Math.random() * this.difficulty;
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMoves = [move];
+                    } else if (score === bestScore) {
+                        bestMoves.push(move);
+                    }
+                }
+
+                return bestMoves[Math.floor(Math.random() * bestMoves.length)];
+            }
+
+            wouldGiveCheck(fromRow, fromCol, toRow, toCol, piece) {
+                // Создаем временную копию состояния игры
+                const tempBoard = this.deepCopyBoard(this.gameState.board);
+                const tempCastling = JSON.parse(JSON.stringify(this.gameState.castlingRights));
+                const tempEnPassant = this.gameState.enPassantTarget;
+
+                // Выполняем ход на временной доске
+                this.makeTemporaryMove(tempBoard, fromRow, fromCol, toRow, toCol, piece);
+
+                // Проверяем, дает ли этот ход шах
+                const opponent = piece.color === 'white' ? 'black' : 'white';
+                return this.isInCheck(opponent, tempBoard, tempCastling, tempEnPassant);
+            }
+
+            setupEventListeners() {
+                // Кнопки режима
+                document.querySelectorAll('.btn[data-mode]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.btn[data-mode]').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.gameMode = btn.dataset.mode;
+                        this.botSettings.style.display = this.gameMode === 'bot' ? 'block' : 'none';
+                    });
+                });
+
+                // Радио кнопки ботов
+                document.querySelectorAll('input[name="botType"]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        this.botType = radio.value;
+                    });
+                });
+
+                // Слайдер сложности
+                this.difficultySlider.addEventListener('input', () => {
+                    this.difficulty = parseInt(this.difficultySlider.value);
+                    this.difficultyValue.textContent = this.difficulty;
+                });
+
+                // Кнопка новой игры
+                document.getElementById('newGameBtn').addEventListener('click', () => {
+                    this.resetGame();
+                });
+
+                // Кнопка отмены
+                document.getElementById('undoBtn').addEventListener('click', () => {
+                    this.undoMove();
+                });
+
+                // Инициализация видимости настроек бота
+                this.botSettings.style.display = this.gameMode === 'bot' ? 'block' : 'none';
+            }
+
+            resetGame() {
+                this.initializeBoard();
+                this.clearSelection();
+                this.selectedPiece = null;
+                this.validMoves = [];
+                this.updateStatus();
+                this.movesHistoryElement.innerHTML = '';
+            }
+
+            undoMove() {
+                if (this.gameState.gameHistory.length === 0) return;
+
+                const lastMove = this.gameState.gameHistory.pop();
+
+                // Восстанавливаем состояние игры
+                this.gameState.board = this.deepCopyBoard(this.gameState.board);
+                this.gameState.castlingRights = lastMove.castlingRights;
+                this.gameState.enPassantTarget = lastMove.enPassantTarget;
+                this.gameState.currentPlayer = lastMove.currentPlayer;
+
+                // Возвращаем фигуру на исходную позицию
+                this.gameState.board[lastMove.from.row][lastMove.from.col] = {...lastMove.piece};
+                if (lastMove.captured) {
+                    this.gameState.board[lastMove.to.row][lastMove.to.col] = {...lastMove.captured};
+                } else {
+                    this.gameState.board[lastMove.to.row][lastMove.to.col] = null;
+                }
+
+                // Обработка взятия на проходе
+                if (lastMove.capturedEnPassant) {
+                    const capturedColor = lastMove.piece.color === 'white' ? 'black' : 'white';
+                    this.gameState.board[lastMove.capturedEnPassant.row][lastMove.capturedEnPassant.col] =
+                        {type: 'pawn', color: capturedColor, hasMoved: true};
+                }
+
+                // Обработка рокировки
+                if (lastMove.piece.type === 'king' && Math.abs(lastMove.from.col - lastMove.to.col) === 2) {
+                    if (lastMove.to.col > lastMove.from.col) { // Короткая рокировка
+                        this.gameState.board[lastMove.from.row][7] = this.gameState.board[lastMove.from.row][5];
+                        this.gameState.board[lastMove.from.row][5] = null;
+                    } else { // Длинная рокировка
+                        this.gameState.board[lastMove.from.row][0] = this.gameState.board[lastMove.from.row][3];
+                        this.gameState.board[lastMove.from.row][3] = null;
+                    }
+                }
+
+                this.gameState.gameOver = false;
+                this.gameState.winner = null;
+                this.gameState.check = false;
+                this.gameState.moveCount--;
+
+                this.renderBoard();
+                this.updateStatus();
+                this.updateMovesHistory();
+            }
+        }
+
+        // Инициализация игры при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            const game = new NeonChessPro();
+        });
+</script>
+</body>
+</html>

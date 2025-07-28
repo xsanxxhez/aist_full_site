@@ -1,0 +1,21 @@
+{
+  "new_chat": "Nuevo chat",
+  "main_page": "Página principal",
+  "tools": "Herramientas",
+  "image_generation": "Generación de imágenes",
+  "chat_history": "Historial de chats",
+  "settings": "Configuración",
+  "help": "Ayuda",
+  "settings_title": "Configuración",
+  "interface_theme": "Tema de la interfaz:",
+  "clear_history": "Borrar historial de chats",
+  "about": "Acerca de",
+  "about_text": "AIST Chat-Bot\nVersión: 1.0\nIA, generación de imágenes, múltiples temas.",
+  "ask_question": "Haz una pregunta o inicia un nuevo diálogo",
+  "input_placeholder": "Escribe tu pregunta...",
+  "chat_title": "AIST",
+  "chat_input_placeholder": "Escribe un mensaje...",
+  "image_gen_title": "Generación de imágenes",
+  "image_gen_desc": "Describe lo que quieres ver y AIST creará imágenes únicas",
+  "image_gen_input_placeholder": "Por ejemplo: 'Un gato con un traje espacial'"
+}

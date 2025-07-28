@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="be">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="title">AIST — першы нацыянальны ІІ</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+  <script src="../locales/lang.js" defer></script>
+</head>
+
+<body>
+<!-- Анимированный фон с несколькими слоями -->
+<div id="particles-js"></div>
+<div class="gradient-bg"></div>
+<div class="grid-pattern"></div>
+<nav class="nav-bar">
+  <div class="logo-container">
+    <div class="logo">
+      <img src="ai-avatar.png" width="60" height="60">
+      <span class="logo-text">AIST</span>
+    </div>
+    <div class="nav-links">
+      <a href="index2.html" class="nav-link active" data-i18n="nav_home">
+        <span class="nav-text">Галоуная</span>
+        <div class="nav-underline"></div>
+      </a>
+      <a href="chat.html" class="nav-link " data-i18n="nav_assistant">
+        <span class="nav-text">ІІ Асістэнт</span>
+        <div class="nav-underline"></div>
+      </a>
+      <a href="auth.html" class="nav-link" data-i18n="nav_auth">
+        <span class="nav-text">Аўтарызацыя</span>
+        <div class="nav-underline"></div>
+      </a>
+      <a href="business.html" class="nav-link" data-i18n="nav_business">
+        <span class="nav-text">Бизнес</span>
+        <div class="nav-underline"></div>
+      </a>
+      <a href="public/index.html" class="nav-link" data-i18n="nav_chess">
+        <span class="nav-text">Шахматы</span>
+        <div class="nav-underline"></div>
+      </a>
+      <a href="contacts.html" class="nav-link" data-i18n="nav_contacts">
+        <span class="nav-text">Контакты</span>
+        <div class="nav-underline"></div>
+      </a>
+
+    </div>
+  </div>
+  <div class="nav-actions">
+    <div class="theme-switcher">
+      <input type="checkbox" id="theme-toggle">
+      <label for="theme-toggle">
+        <i class="fas fa-sun"></i>
+        <i class="fas fa-moon"></i>
+        <span class="ball"></span>
+      </label>
+    </div>
+    <div class="language-selector-wrapper">
+      <select class="language-selector">
+        <option value="be">Беларуская</option>
+        <option value="ru">Русский</option>
+        <option value="en">English</option>
+      </select>
+      <div class="language-selector-arrow">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+    </div>
+  </div>
+</nav>
+<!-- Герой-секция с параллакс эффектом -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-text">
+
+      <h1 class="hero-title" data-i18n="hero_title">
+        <span class="title-gradient">Нацыянальны</span>
+        <span class="title-highlight">Iнтэлектуальны асістэнт</span>
+        <span class="title-fade">Беларусі</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="hero_subtitle">
+        AIST — першы ІІ у Беларусі, створаны для людзей, з улікам мовы, ментальнасці і нацыянальных каштоўнасцей.
+      </p>
+      <div class="hero-cta">
+        <a href="chat.html" class="cta-button pulse" data-i18n="try_now">
+          <span>Паспрабаваць</span>
+          <div class="button-icon">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+          <div class="button-hover-effect"></div>
+        </a>
+        <a href="#features" class="secondary-button" data-i18n="learn_more">
+          <span>Даведацца больш</span>
+          <div class="button-icon">
+            <i class="fas fa-book-open"></i>
+          </div>
+          <div class="button-hover-effect"></div>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-number" data-count="10000">0</div>
+          <div class="stat-label" data-i18n="users">Карыстальнікаў</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="24">0</div>
+          <div class="stat-label" data-i18n="languages">Мовы</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" data-count="99">0</div>
+          <div class="stat-label" data-i18n="accuracy">Дакладнасць</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="floating-ai">
+        <div class="ai-circle"></div>
+        <div class="ai-core pulse"></div>
+        <div class="ai-ring"></div>
+        <div class="ai-dots">
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+          <div class="dot"></div>
+        </div>
+        <img src="ai-avatar.png" alt="AIST Avatar" class="ai-avatar">
+      </div>
+      <div class="tech-icons">
+        <div class="tech-icon">
+          <i class="fab fa-python"></i>
+          <div class="tech-tooltip">Python</div>
+        </div>
+        <div class="tech-icon">
+          <i class="fas fa-brain"></i>
+          <div class="tech-tooltip">Нейронныя сеткі</div>
+        </div>
+        <div class="tech-icon">
+          <i class="fas fa-code"></i>
+          <div class="tech-tooltip">Open Source</div>
+        </div>
+        <div class="tech-icon">
+          <i class="fas fa-shield-alt"></i>
+          <div class="tech-tooltip">Бяспека</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <div class="mouse">
+      <div class="wheel"></div>
+    </div>
+    <div class="arrow"></div>
+  </div>
+  <div class="hero-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+</section>
+
+<!-- Особенности с анимированными карточками -->
+<section class="features-section" id="features">
+  <div class="section-header">
+    <div class="section-badge">
+      <span data-i18n="features">Магчымасці</span>
+    </div>
+    <h2 class="section-title" data-i18n="why_success">💡 Чаму гэты праект будзе мець поспех</h2>
+    <p class="section-subtitle" data-i18n="features_subtitle">Сучасныя тэхналогіі, унікальны падыход і нацыянальная спецыфіка</p>
+
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card" data-feature="unique">
+      <div class="feature-icon">
+        <i class="fas fa-star"></i>
+        <div class="icon-bg"></div>
+      </div>
+      <h3 data-i18n="success_unique">Унікальнасць</h3>
+      <p>У Беларусі і СНД няма аналагаў</p>
+      <div class="feature-wave"></div>
+      <div class="feature-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+
+    <div class="feature-card" data-feature="tech">
+      <div class="feature-icon">
+        <i class="fas fa-code-branch"></i>
+        <div class="icon-bg"></div>
+      </div>
+      <h3>Open Source</h3>
+      <p data-i18n="success_open">MVP можна зрабіць без мільёнаў</p>
+      <div class="feature-wave"></div>
+      <div class="feature-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+
+    <div class="feature-card" data-feature="future">
+      <div class="feature-icon">
+        <i class="fas fa-chart-line"></i>
+        <div class="icon-bg"></div>
+      </div>
+      <h3 data-i18n="success_invest">Інвестары</h3>
+      <p>Шукаюць такія праекты ва Усходняй Еўропе</p>
+      <div class="feature-wave"></div>
+      <div class="feature-dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="features-connector">
+    <div class="connector-line"></div>
+    <div class="connector-dot"></div>
+  </div>
+</section>
+
+<!-- Интерактивная демонстрация -->
+<section class="demo-section">
+  <div class="demo-container">
+    <div class="demo-text">
+      <div class="demo-badge">
+        <span data-i18n="demo">Дэманстрацыя</span>
+      </div>
+      <h2 data-i18n="afterword_title">🕊️ AIST — праект, які мяняе ўсё</h2>
+      <p data-i18n="afterword_text">
+        AIST — гэта не проста стартап. Гэта платформа новай лічбавай эпохі, дзе Беларусь перастае быць толькі спажыўцом заходніх ІІ і становіцца вытворцам уласных.
+      </p>
+      <div class="trends-list">
+        <div class="trend-item">
+          <div class="trend-icon">
+            <div class="icon-bg"></div>
+            <i class="fas fa-bolt"></i>
+          </div>
+          <div class="trend-content">
+            <h4 data-i18n="trend_genai">Генератыўны ІІ</h4>
+            <p>Імкліва расце пасля поспеху ChatGPT і DeepSeek</p>
+            <div class="trend-progress">
+              <div class="progress-bar" style="width: 85%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="trend-item">
+          <div class="trend-icon">
+            <div class="icon-bg"></div>
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="trend-content">
+            <h4 data-i18n="trend_sovtech">Суверэнныя тэхналогіі</h4>
+            <p>Попыт на лакальныя рашэнні для дзяржаў і бізнесу</p>
+            <div class="trend-progress">
+              <div class="progress-bar" style="width: 75%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="trend-item">
+          <div class="trend-icon">
+            <div class="icon-bg"></div>
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+          <div class="trend-content">
+            <h4 data-i18n="trend_edu">Адукацыя</h4>
+            <p>Патрэба ў аўтаматызацыі і абароне дадзеных</p>
+            <div class="trend-progress">
+              <div class="progress-bar" style="width: 65%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-visual">
+      <div class="chat-preview">
+        <div class="chat-header">
+          <div class="chat-avatar">
+            <img src="ai-avatar.png" alt="AIST">
+          </div>
+          <div class="chat-info">
+            <h4>AIST Assistant</h4>
+            <span class="status online">Online</span>
+          </div>
+          <div class="chat-actions">
+            <button class="chat-action-btn"><i class="fas fa-ellipsis-h"></i></button>
+          </div>
+        </div>
+        <div class="chat-messages">
+          <div class="message user">
+            <div class="message-content" data-i18n="chat_sample_question">Што ты ведаеш пра Беларусь?</div>
+            <div class="message-time">12:34</div>
+          </div>
+          <div class="message bot">
+            <div class="message-content typing-animation" data-i18n="chat_sample_reply">Я ведаю шмат! Беларусь - гэта краіна з багатай гісторыяй і культурай...</div>
+            <div class="message-time">12:35</div>
+          </div>
+        </div>
+        <div class="chat-input-preview">
+          <input type="text" placeholder="Напішыце паведамленне..." data-i18n-placeholder="chat_placeholder">
+          <button class="send-btn">
+            <i class="fas fa-paper-plane"></i>
+            <div class="send-effect"></div>
+          </button>
+        </div>
+        <div class="chat-pattern"></div>
+      </div>
+    </div>
+  </div>
+  <div class="demo-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+  </div>
+</section>
+
+<!-- Секция технологий -->
+<section class="tech-section">
+  <div class="tech-container">
+    <div class="tech-header">
+      <div class="tech-badge">
+        <span data-i18n="technology">Тэхналогіі</span>
+      </div>
+      <h2 data-i18n="tech_title">Сучасныя тэхналогіі для будучыні</h2>
+      <p data-i18n="tech_subtitle">Мы выкарыстоўваем апошнія дасягненні ў галіне штучнага інтэлекту</p>
+    </div>
+    <div class="tech-stack">
+      <div class="tech-item">
+        <div class="tech-icon">
+          <i class="fas fa-brain"></i>
+          <div class="tech-pulse"></div>
+        </div>
+        <h3 data-i18n="tech_nn">Нейронныя сеткі</h3>
+        <p data-i18n="tech_nn_desc">Глыбокія нейронныя сеткі новага пакалення</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">
+          <i class="fas fa-language"></i>
+          <div class="tech-pulse"></div>
+        </div>
+        <h3 data-i18n="tech_nlp">Апрацоўка мовы</h3>
+        <p data-i18n="tech_nlp_desc">Перадавыя NLP алгарытмы для беларускай мовы</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">
+          <i class="fas fa-cloud"></i>
+          <div class="tech-pulse"></div>
+        </div>
+        <h3 data-i18n="tech_cloud">Воблачныя тэхналогіі</h3>
+        <p data-i18n="tech_cloud_desc">Маштабавальныя воблачныя рашэнні</p>
+      </div>
+      <div class="tech-item">
+        <div class="tech-icon">
+          <i class="fas fa-lock"></i>
+          <div class="tech-pulse"></div>
+        </div>
+        <h3 data-i18n="tech_security">Бяспека</h3>
+        <p data-i18n="tech_security_desc">Шыфраванне дадзеных і суверэнныя серверы</p>
+      </div>
+    </div>
+  </div>
+  <div class="tech-wave">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+      <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+      <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+    </svg>
+  </div>
+</section>
+
+<!-- Анимированный футер -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <div class="logo-icon">
+          <div class="logo-inner"></div>
+          <span>A</span>
+        </div>
+        <span>AIST</span>
+      </div>
+      <p data-i18n="footer_tagline">Нацыянальны інтэлектуальны асістэнт Беларусі</p>
+      <div class="footer-newsletter">
+        <h4 data-i18n="newsletter">Падпісацца на навіны</h4>
+        <div class="newsletter-form">
+          <input type="email" placeholder="Ваш email" data-i18n-placeholder="email_placeholder">
+          <button type="submit">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+      <div class="social-links">
+        <a href="#" class="social-link">
+          <i class="fab fa-telegram"></i>
+          <div class="social-tooltip">Telegram</div>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-vk"></i>
+          <div class="social-tooltip">VK</div>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-github"></i>
+          <div class="social-tooltip">GitHub</div>
+        </a>
+        <a href="#" class="social-link">
+          <i class="fab fa-youtube"></i>
+          <div class="social-tooltip">YouTube</div>
+        </a>
+      </div>
+    </div>
+    <div class="footer-links">
+      <div class="links-column">
+        <h4>Навігацыя</h4>
+        <ul>
+          <li><a href="index2.html" data-i18n="nav_home">Галоўная</a></li>
+          <li><a href="auth.html" data-i18n="nav_auth">Аўтарызацыя</a></li>
+          <li><a href="chat.html" data-i18n="nav_assistant">ІІ Асістэнт</a></li>
+          <li><a href="business.html" data-i18n="nav_business">Бiзнес</a></li>
+          <li><a href="public/index.html" data-i18n="nav_contacts">Шахматы</a></li>
+          <li><a href="contacts.html" data-i18n="nav_contacts">Контакты</a></li>
+        </ul>
+      </div>
+      <div class="links-column">
+        <h4>Рэсурсы</h4>
+        <ul>
+          <li><a href="#" data-i18n="resources_api">API</a></li>
+          <li><a href="#" data-i18n="resources_docs">Дакументацыя</a></li>
+          <li><a href="#" data-i18n="resources_blog">Блог</a></li>
+          <li><a href="#" data-i18n="resources_faq">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="links-column">
+        <h4>Кантакты</h4>
+        <ul>
+          <li><a href="mailto:info@aist.by">info@aist.by</a></li>
+          <li><a href="#">+375 (29) 123-45-67</a></li>
+          <li><a href="#" data-i18n="contact_address">Мінск, Беларусь</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p data-i18n="footer_copyright">© 2025 AIST. Усе правы абаронены.</p>
+    <div class="footer-legal">
+      <a href="#" data-i18n="footer_privacy">Палітыка прыватнасці</a>
+      <a href="#" data-i18n="footer_terms">Умовы выкарыстання</a>
+    </div>
+    <div class="footer-wave"></div>
+  </div>
+</footer>
+
+<!-- Кнопка "Наверх" -->
+<button class="scroll-top">
+  <i class="fas fa-arrow-up"></i>
+  <div class="scroll-effect"></div>
+</button>
+
+<script src="assets/script.js"></script>
+<script>
+  // Инициализация частиц
+  particlesJS.load('particles-js', 'assets/particles.json', function() {
+    console.log('Particles.js loaded');
+  });
+
+  // Инициализация GSAP анимаций
+  document.addEventListener('DOMContentLoaded', function() {
+    // Анимация появления элементов при скролле
+    gsap.registerPlugin(ScrollTrigger);
+
+    gsap.utils.toArray('.hero-title span, .hero-subtitle, .hero-cta').forEach(el => {
+      gsap.from(el, {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        stagger: 0.1,
+        scrollTrigger: {
+          trigger: '.hero-section',
+          start: 'top 80%'
+        }
+      });
+    });
+
+    gsap.utils.toArray('.feature-card').forEach((card, i) => {
+      gsap.from(card, {
+        opacity: 0,
+        y: 50,
+        duration: 0.6,
+        delay: i * 0.1,
+        scrollTrigger: {
+          trigger: '.features-section',
+          start: 'top 80%'
+        }
+      });
+    });
+
+    // Анимация счетчиков
+    const counters = document.querySelectorAll('.stat-number');
+    const speed = 200;
+
+    counters.forEach(counter => {
+      const target = +counter.getAttribute('data-count');
+      const count = +counter.innerText;
+      const increment = target / speed;
+
+      if (count < target) {
+        counter.innerText = Math.ceil(count + increment);
+        setTimeout(updateCounter, 1);
+      } else {
+        counter.innerText = target;
+      }
+
+      function updateCounter() {
+        const count = +counter.innerText;
+        if (count < target) {
+          counter.innerText = Math.ceil(count + increment);
+          setTimeout(updateCounter, 1);
+        } else {
+          counter.innerText = target;
+        }
+      }
+
+      ScrollTrigger.create({
+        trigger: counter,
+        start: 'top 80%',
+        onEnter: updateCounter
+      });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="be" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIST Чат-Бот</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <script src="../locales/chat-scripts.js" defer></script>
+  <link rel="stylesheet" href="../locales/chat-styles.css">
+  <!-- ml5.js for client-side GAN image generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+  <script src="https://unpkg.com/ml5@latest/dist/ml5.min.js"></script>
+</head>
+<body>
+<div class="app-container">
+  <!-- Боковое меню -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" id="sidebar-toggle">
+      <i class="fas fa-chevron-left"></i>
+    </div>
+    <div class="sidebar-header">
+      <button class="new-chat-btn" id="new-chat-btn">
+        <i class="fas fa-plus"></i> <span>Новы чат</span>
+      </button>
+      <a href="index2.html" class="sidebar-item" id="main-page-btn">
+        <i class="fas fa-home"></i> <span>Галоўная</span>
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">Інструменты</div>
+      <a href="#" class="sidebar-item" data-mode="image">
+        <i class="fas fa-image"></i> <span>Генерацыя выяў</span>
+      </a>
+      <div class="sidebar-title">Гісторыя чатаў</div>
+      <div class="sidebar-section chat-history-section">
+        <!-- Здесь будут динамически добавляться сохраненные чаты -->
+      </div>
+
+
+
+      <a href="#" id="settings-btn" title="Налады" class="sidebar-item" >
+        <i class="fas fa-cog"></i> <span>Налады</span>
+      </a>
+
+
+      <a href="#" class="sidebar-item">
+        <i class="fas fa-info-circle"></i> <span>Даведка</span>
+      </a>
+    </div>
+  </div>
+  <!-- Settings Modal -->
+  <div id="settings-modal">
+    <div class="settings-modal-content">
+      <button class="settings-close" id="close-settings"><i class="fas fa-times"></i></button>
+      <div class="settings-title">Налады</div>
+      <div class="settings-section">
+        <label>Тэма інтэрфейсу:</label>
+        <button class="theme-btn" data-theme="light">Light</button>
+        <button class="theme-btn" data-theme="dark">Dark</button>
+        <button class="theme-btn" data-theme="pastel">Pastel</button>
+        <button class="theme-btn" data-theme="solarized">Solarized</button>
+        <button class="theme-btn" data-theme="forest">Forest</button>
+        <button class="theme-btn" data-theme="ocean">Ocean</button>
+        <button class="theme-btn" data-theme="cyberpunk">Cyberpunk</button>
+      </div>
+      <div class="settings-section">
+        <button class="settings-action-btn" id="clear-history-btn">Ачысціць гісторыю чатаў</button>
+        <button class="settings-action-btn" id="about-btn">Пра праграму</button>
+      </div>
+      <div class="settings-about">AIST Чат-Бот<br>Версія: 1.0<br>AI, генерацыя выяў, шмат тэм.</div>
+    </div>
+  </div>
+  <!-- Основное содержимое -->
+  <div class="main-content" id="main-content">
+    <!-- Кнопка переключения темы -->
+    <div class="theme-toggle" id="theme-toggle">
+      <i class="fas fa-sun"></i>
+      <i class="fas fa-moon"></i>
+    </div>
+    <!-- Начальный экран с поиском -->
+    <div class="search-screen" id="search-screen">
+      <h1>AIST</h1>
+      <p>Задайце пытанне або пачніце новы дыялог</p>
+      <div class="search-box">
+        <input type="text" class="search-input" id="search-input" placeholder="Напішыце ваша пытанне...">
+        <button class="search-button" id="search-button">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+    <!-- Чат-интерфейс -->
+    <div class="chat-container" id="chat-container">
+      <div class="chat-header">
+        <div class="chat-avatar"><img src="ai-avatar.png" width="55" height="55"></div>
+        <div class="chat-title">AIST</div>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <!-- Сообщения будут добавляться здесь -->
+      </div>
+      <div class="chat-input-container">
+        <div class="chat-input-box">
+          <input type="text" class="chat-input" id="chat-input" placeholder="Напішыце паведамленне...">
+          <button class="send-button" id="send-button">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Интерфейс генерации изображений -->
+    <div class="image-gen-screen" id="image-gen-screen">
+      <h1>Генерацыя выяў</h1>
+      <p>Апішыце што вы хочаце ўбачыць і AIST стварыць унікальныя выявы</p>
+      <div class="search-box">
+        <input type="text" class="search-input" id="image-gen-input" placeholder="Напрыклад: 'Котка ў касмічным скафандры'">
+        <button class="search-button" id="image-gen-button">
+          <i class="fas fa-magic"></i>
+        </button>
+      </div>
+      <div class="image-results" id="image-results">
+        <!-- Здесь будут отображаться сгенерированные изображения -->
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
