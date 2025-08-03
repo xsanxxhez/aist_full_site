@@ -23,7 +23,7 @@ def chat():
         max_length=1000,
         num_return_sequences=1,
         no_repeat_ngram_size=3,
-        temperature=0.7,
+        temperature=0.1,
         top_p=0.95
     )
     bot_response = tokenizer.decode(reply_ids[0], skip_special_tokens=True)

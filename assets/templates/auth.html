@@ -554,6 +554,15 @@
         padding: 10px;
       }
     }
+    .error-message {
+  color: var(--soft-pink);
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+
+.form-control.error {
+  border-color: var(--soft-pink);
+}
   </style>
 </head>
 <body>
@@ -743,6 +752,11 @@
   const themeToggle = document.getElementById('theme-toggle');
   const languageSelector = document.querySelector('.language-selector');
 
+  // URL эндпоинтов API (замените на реальные)
+  const API_BASE_URL = 'https://your-api-domain.com/api';
+  const LOGIN_URL = `${API_BASE_URL}/auth/login`;
+  const REGISTER_URL = `${API_BASE_URL}/auth/register`;
+
   // Переключение мобильного меню
   mobileMenuToggle.addEventListener('click', () => {
     navLinks.classList.toggle('active');
@@ -778,7 +792,7 @@
       forms.forEach(f => f.classList.remove('active'));
 
       document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
-      document.getElementById('login-form').classList.add('active');
+      document.getElementById('login-form').classlassList.add('active');
     });
   }
 
@@ -806,12 +820,148 @@
     themeToggle.checked = true;
   }
 
-  // Обработка форм
-  document.querySelectorAll('form').forEach(form => {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert('Форма адпраўлена! У рэальным дадатку тут будзе праверка і адпраўка дадзеных на сервер.');
+  // Функция для показа сообщений об ошибках
+  function showError(elementId, message) {
+    const element = document.getElementById(elementId);
+    const errorElement = document.getElementById(`${elementId}-error`) ||
+      document.createElement('div');
+
+    errorElement.id = `${elementId}-error`;
+    errorElement.className = 'error-message';
+    errorElement.style.color = 'var(--soft-pink)';
+    errorElement.style.fontSize = '0.8rem';
+    errorElement.style.marginTop = '5px';
+    errorElement.textContent = message;
+
+    if (!document.getElementById(`${elementId}-error`)) {
+      element.parentNode.appendChild(errorElement);
+    }
+
+    element.style.borderColor = 'var(--soft-pink)';
+  }
+
+  // Функция для очистки ошибок
+  function clearErrors(form) {
+    form.querySelectorAll('.error-message').forEach(el => el.remove());
+    form.querySelectorAll('.form-control').forEach(el => {
+      el.style.borderColor = 'var(--dark-bg)';
     });
+  }
+
+  // Функция для обработки успешной авторизации
+  function handleLoginSuccess(response) {
+    // Сохраняем токен в localStorage
+    localStorage.setItem('authToken', response.token);
+    localStorage.setItem('user', JSON.stringify(response.user));
+
+    // Перенаправляем пользователя
+    window.location.href = 'chat.html';
+  }
+
+  // Функция для обработки успешной регистрации
+  function handleRegisterSuccess(response) {
+    alert('Рэгістрацыя паспяховая! Цяпер вы можаце ўвайсці ў сістэму.');
+
+    // Переключаемся на форму входа
+    tabs.forEach(t => t.classList.remove('active'));
+    forms.forEach(f => f.classList.remove('active'));
+
+    document.querySelector('.auth-tab[data-tab="login"]').classList.add('active');
+    document.getElementById('login-form').classList.add('active');
+  }
+
+  // Обработка формы входа
+  const loginForm = document.querySelector('#login-form form');
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearErrors(loginForm);
+
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    // Валидация
+    if (!email) {
+      showError('login-email', 'Увядзіце электронную пошту');
+      return;
+    }
+
+    if (!password) {
+      showError('login-password', 'Увядзіце пароль');
+      return;
+    }
+
+    try {
+      const response = await fetch(LOGIN_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Не атрымалася ўвайсці');
+      }
+
+      handleLoginSuccess(data);
+    } catch (error) {
+      alert(`Памылка: ${error.message}`);
+    }
+  });
+
+  // Обработка формы регистрации
+  const registerForm = document.querySelector('#register-form form');
+  registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearErrors(registerForm);
+
+    const name = document.getElementById('register-name').value;
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+    const confirmPassword = document.getElementById('register-confirm').value;
+
+    // Валидация
+    if (!name) {
+      showError('register-name', 'Увядзіце ваша імя');
+      return;
+    }
+
+    if (!email) {
+      showError('register-email', 'Увядзіце электронную пошту');
+      return;
+    }
+
+    if (!password) {
+      showError('register-password', 'Увядзіце пароль');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      showError('register-confirm', 'Паролі не супадаюць');
+      return;
+    }
+
+    try {
+      const response = await fetch(REGISTER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Не атрымалася зарэгістравацца');
+      }
+
+      handleRegisterSuccess(data);
+    } catch (error) {
+      alert(`Памылка: ${error.message}`);
+    }
   });
 
   // Обработка социальных кнопок

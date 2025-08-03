@@ -1,4 +1,3 @@
-
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -6,7 +5,15 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 app = Flask(__name__)
 CORS(app)  # Разрешить CORS для всех доменов
 
-# Загрузка модели и токенизатора (DialoGPT-medium)
+# --- THIS IS THE PART THAT TAKES A LONG TIME ---
+# When you run this script for the first time, these lines will:
+# 1. Download the 'microsoft/DialoGPT-medium' model and tokenizer files
+#    from the internet (Hugging Face model hub). This can be hundreds of MBs.
+# 2. Save them to your local cache directory.
+# 3. Load the model weights into your computer's memory.
+# This process can take several minutes to an hour depending on your internet
+# speed and system resources. Subsequent runs will be much faster as the
+# model will be loaded from your local cache.
 tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
 model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
 
@@ -30,4 +37,6 @@ def chat():
     return jsonify({'response': bot_response})
 
 if __name__ == '__main__':
+    # The Flask app will start listening on port 5030 once the model is loaded.
+    # You should see output like "Running on http://0.0.0.0:5030/" once it's ready.
     app.run(host='0.0.0.0', port=5030, debug=True)

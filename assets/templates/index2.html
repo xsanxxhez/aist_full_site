@@ -26,7 +26,7 @@
     </div>
     <div class="nav-links">
       <a href="index2.html" class="nav-link active" data-i18n="nav_home">
-        <span class="nav-text">Галоуная</span>
+        <span class="nav-text">Галоўная</span>
         <div class="nav-underline"></div>
       </a>
       <a href="chat.html" class="nav-link " data-i18n="nav_assistant">
@@ -41,10 +41,7 @@
         <span class="nav-text">Бизнес</span>
         <div class="nav-underline"></div>
       </a>
-      <a href="public/index.html" class="nav-link" data-i18n="nav_chess">
-        <span class="nav-text">Шахматы</span>
-        <div class="nav-underline"></div>
-      </a>
+
       <a href="contacts.html" class="nav-link" data-i18n="nav_contacts">
         <span class="nav-text">Контакты</span>
         <div class="nav-underline"></div>
@@ -102,20 +99,7 @@
           <div class="button-hover-effect"></div>
         </a>
       </div>
-      <div class="hero-stats">
-        <div class="stat-item">
-          <div class="stat-number" data-count="10000">0</div>
-          <div class="stat-label" data-i18n="users">Карыстальнікаў</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number" data-count="24">0</div>
-          <div class="stat-label" data-i18n="languages">Мовы</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number" data-count="99">0</div>
-          <div class="stat-label" data-i18n="accuracy">Дакладнасць</div>
-        </div>
-      </div>
+      
     </div>
     <div class="hero-image">
       <div class="floating-ai">
@@ -128,16 +112,18 @@
           <div class="dot"></div>
           <div class="dot"></div>
         </div>
-        <img src="ai-avatar.png" alt="AIST Avatar" class="ai-avatar">
+        <a href="temporary.html" class="avatar-link">
+          <img src="ai-avatar.png" alt="AIST Avatar" class="ai-avatar">
+        </a>
       </div>
       <div class="tech-icons">
         <div class="tech-icon">
-          <i class="fab fa-python"></i>
-          <div class="tech-tooltip">Python</div>
+          <i class="fas fa-brain"></i>
+          <div class="tech-tooltip">Нейрасетi</div>
         </div>
         <div class="tech-icon">
-          <i class="fas fa-brain"></i>
-          <div class="tech-tooltip">Нейронныя сеткі</div>
+          <i class="fa-solid fa-atom"></i>
+          <div class="tech-tooltip">API</div>
         </div>
         <div class="tech-icon">
           <i class="fas fa-code"></i>
@@ -462,12 +448,9 @@
   <div class="scroll-effect"></div>
 </button>
 
-<script src="assets/script.js"></script>
+
 <script>
-  // Инициализация частиц
-  particlesJS.load('particles-js', 'assets/particles.json', function() {
-    console.log('Particles.js loaded');
-  });
+
 
   // Инициализация GSAP анимаций
   document.addEventListener('DOMContentLoaded', function() {
@@ -533,6 +516,12 @@
       });
     });
   });
+
+// Замените particles.js в script.js
+document.addEventListener('DOMContentLoaded', function() {
+  const rainContainer = document.createElement('div');
+  rainContainer.className = 'digital-rain';
+  document.body.prepend(rainContainer);
 </script>
 </body>
 </html>

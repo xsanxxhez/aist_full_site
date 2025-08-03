@@ -110,6 +110,7 @@ body {
   gap: 40px;
 }
 
+
 .logo {
   display: flex;
   align-items: center;
@@ -674,7 +675,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   background: var(--dark-bg);
-  color: white;
+  color: black;
   padding: 5px 10px;
   border-radius: 5px;
   font-size: 0.8rem;
@@ -2019,4 +2020,28 @@ font-size: 0.9rem;
 .tech-stack {
 grid-template-columns: 1fr;
 }
+}
+/* Добавьте в style.css */
+.digital-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -3;
+  background: linear-gradient(to bottom, rgba(10,10,20,0.9), rgba(5,5,15,0.95));
+  overflow: hidden;
+}
+
+.digital-drop {
+  position: absolute;
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--soft-mint));
+  animation: fall linear infinite;
+  opacity: 0.6;
+}
+
+@keyframes fall {
+  to { transform: translateY(100vh); }
 }
